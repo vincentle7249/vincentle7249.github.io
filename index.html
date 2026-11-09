@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Vincent's Shares</title>
+<style>
+  :root { color-scheme: light dark; }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    min-height: 100vh;
+    display: grid;
+    place-items: center;
+    padding: 24px;
+    font: 16px/1.55 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    background: #f4f5f7;
+    color: #14161a;
+  }
+  main {
+    width: 100%;
+    max-width: 430px;
+    background: #fff;
+    border-radius: 18px;
+    padding: 34px 28px 30px;
+    box-shadow: 0 12px 40px rgba(16, 20, 28, .10);
+    text-align: center;
+  }
+  .icon { font-size: 44px; line-height: 1; }
+  h1 { font-size: 25px; margin: 16px 0 8px; letter-spacing: -.02em; }
+  p { margin: 0 0 22px; color: #59616e; font-size: 15px; }
+  a.btn {
+    display: block;
+    padding: 16px 20px;
+    border-radius: 12px;
+    background: #1f6feb;
+    color: #fff;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 17px;
+    transition: background .15s;
+  }
+  a.btn:hover, a.btn:focus { background: #1a5fd0; }
+  a.btn.secondary {
+    margin-top: 12px;
+    background: transparent;
+    color: #1a5fd0;
+    border: 1px solid #b9c4d4;
+  }
+  a.btn.secondary:hover, a.btn.secondary:focus { background: #eef3fb; }
+  button.btn2 {
+    display: block;
+    width: 100%;
+    margin-top: 12px;
+    padding: 12px 16px;
+    border: 1px solid #c7cdd6;
+    border-radius: 10px;
+    background: transparent;
+    color: inherit;
+    font: inherit;
+    font-weight: 600;
+    font-size: 15px;
+    cursor: pointer;
+  }
+  button.btn2:hover, button.btn2:focus { border-color: #1a5fd0; color: #1a5fd0; }
+  .hint {
+    margin-top: 22px;
+    padding-top: 20px;
+    border-top: 1px solid #e8eaee;
+    font-size: 13.5px;
+    color: #6b7280;
+    text-align: left;
+  }
+  .hint strong { color: #374151; }
+  .hint p { margin: 0 0 10px; font-size: 13.5px; color: #6b7280; }
+  .hint p:last-child { margin-bottom: 0; }
+  @media (prefers-color-scheme: dark) {
+    body { background: #0f1115; color: #e8eaee; }
+    main { background: #171a20; box-shadow: 0 12px 40px rgba(0,0,0,.5); }
+    p { color: #9aa3af; }
+    a.btn.secondary { color: #7fb0ff; border-color: #333a45; }
+    a.btn.secondary:hover, a.btn.secondary:focus { background: #1d2635; }
+    button.btn2 { border-color: #333a45; }
+    .hint { border-top-color: #262b33; color: #8b93a1; }
+    .hint strong { color: #c4cad4; }
+    .hint p { color: #8b93a1; }
+  }
+</style>
+</head>
+<body>
+<main>
+  <div class="icon" aria-hidden="true">📁</div>
+  <h1>Vincent's Shares</h1>
+  <p>Photos and media. Works in any browser — no app needed.</p>
+
+  <a class="btn" href="https://vincentle7249.github.io/photos/">Photo Share →</a>
+  <a class="btn secondary" href="https://vincentle7249.github.io/media/">Media Share →</a>
+  <button class="btn2" id="knock" type="button">Door closed? Enter access code</button>
+
+  <div class="hint">
+    <p><strong>You'll need a login</strong> for the full shares. Ask Vincent for the username and password — there's no sign-up.</p>
+    <p><strong>Got a share link instead?</strong> A share link opens straight to one file or folder; no login required.</p>
+    <p><strong>"The door is closed"?</strong> Enter the access code from Vincent above, then reload the share you wanted.</p>
+    <p><strong>Still not loading?</strong> Some work or school networks block sites like this; a different network or your phone's cellular data can help.</p>
+  </div>
+</main>
+<script>
+  document.getElementById('knock').addEventListener('click', function () {
+    var code = window.prompt('Access code (ask Vincent):');
+    if (!code) return;
+    window.location.href = 'https://vinserver.tailb05517.ts.net/knock?code=' +
+      encodeURIComponent(code.trim());
+  });
+</script>
+</body>
+</html>
