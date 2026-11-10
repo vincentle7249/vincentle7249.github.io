@@ -75,54 +75,6 @@
   .hint strong { color: #374151; }
   .hint p { margin: 0 0 10px; font-size: 13.5px; color: #6b7280; }
   .hint p:last-child { margin-bottom: 0; }
-
-  /* ---- Artifacts ---- */
-  .artifacts {
-    margin-top: 22px;
-    padding-top: 22px;
-    border-top: 1px solid #e8eaee;
-    text-align: left;
-  }
-  .artifacts h2 {
-    margin: 0 0 4px;
-    font-size: 13px;
-    font-weight: 600;
-    letter-spacing: .08em;
-    text-transform: uppercase;
-    color: #6b7280;
-  }
-  .artifacts .sub { margin: 0 0 14px; font-size: 13.5px; color: #6b7280; }
-  .arts { display: grid; gap: 8px; }
-  a.art {
-    display: block;
-    padding: 13px 15px;
-    border: 1px solid #e3e6eb;
-    border-radius: 11px;
-    text-decoration: none;
-    color: inherit;
-    transition: border-color .15s, background .15s;
-  }
-  a.art:hover, a.art:focus {
-    border-color: #9db8e8;
-    background: #f4f8ff;
-    outline: none;
-  }
-  .art-title {
-    display: flex;
-    justify-content: space-between;
-    gap: 12px;
-    font-size: 15px;
-    font-weight: 600;
-    line-height: 1.3;
-  }
-  .art-title .arrow { color: #1a5fd0; flex: none; }
-  .art-desc {
-    display: block;
-    margin-top: 3px;
-    font-size: 13px;
-    line-height: 1.4;
-    color: #59616e;
-  }
   @media (prefers-color-scheme: dark) {
     body { background: #0f1115; color: #e8eaee; }
     main { background: #171a20; box-shadow: 0 12px 40px rgba(0,0,0,.5); }
@@ -133,13 +85,6 @@
     .hint { border-top-color: #262b33; color: #8b93a1; }
     .hint strong { color: #c4cad4; }
     .hint p { color: #8b93a1; }
-    .artifacts { border-top-color: #262b33; }
-    .artifacts h2 { color: #8b93a1; }
-    .artifacts .sub { color: #8b93a1; }
-    a.art { border-color: #2b313b; }
-    a.art:hover, a.art:focus { border-color: #3f5c8c; background: #1c2330; }
-    .art-desc { color: #9aa3af; }
-    .art-title .arrow { color: #7fb0ff; }
   }
 </style>
 </head>
@@ -151,19 +96,8 @@
 
   <a class="btn" href="https://vincentle7249.github.io/photos/">Photo Share →</a>
   <a class="btn secondary" href="https://vincentle7249.github.io/media/">Media Share →</a>
+  <a class="btn secondary" href="https://vinserver.tailb05517.ts.net/artifacts/">Artifacts →</a>
   <button class="btn2" id="knock" type="button">Door closed? Enter access code</button>
-
-
-  <div class="artifacts">
-    <h2 id="artifacts-h">Artifacts</h2>
-    <p class="sub">Reference pages I've built. <strong>Same login as the shares.</strong></p>
-    <nav class="arts" aria-labelledby="artifacts-h">
-      <a class="art" href="https://vinserver.tailb05517.ts.net/artifacts/">
-        <span class="art-title">Letter requirements &amp; PI outreach <span class="arrow" aria-hidden="true">→</span></span>
-        <span class="art-desc">What 12 programs ask of a letter writer, with copy-ready request text — plus draft emails for 16 labs.</span>
-      </a>
-    </nav>
-  </div>
 
   <div class="hint">
     <p><strong>You'll need a login</strong> for the full shares. Ask Vincent for the username and password — there's no sign-up.</p>
