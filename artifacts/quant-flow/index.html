@@ -1,0 +1,176 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="robots" content="noindex">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Quantification flow — Mr. A's BAC</title>
+<!-- Skin derived from the CH 455 case-study deck, same as fig/quant-chain.html:
+     paper #FDFBF3, ink #1A1A1A, muted #5A5A5A, accent #B23A2E, family Hind.
+     No webfont link: this file must render offline. -->
+<style>
+  :root{
+    --paper:#FDFBF3; --paper-2:#F2F0EC; --ink:#1A1A1A; --muted:#5A5A5A;
+    --rule:rgba(26,26,26,0.20); --accent:#B23A2E; --accent-tint:rgba(178,58,46,0.07);
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;background:var(--paper);color:var(--ink);}
+  body{font-family:"Hind","Avenir Next",system-ui,-apple-system,sans-serif;
+       padding:28px 20px 40px;line-height:1.4;}
+  .wrap{max-width:720px;margin:0 auto;}
+  .eyebrow{font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin:0 0 8px;}
+  h1{font-size:27px;line-height:1.15;font-weight:600;margin:0 0 10px;letter-spacing:-.01em;}
+  .dek{font-size:14px;color:#3C3C3C;margin:0 0 20px;max-width:56ch;}
+  .diagram-container{overflow-x:auto;border-top:1px solid var(--rule);border-bottom:1px solid var(--rule);
+                     padding:14px 0 10px;}
+  svg{display:block;min-width:600px;width:100%;height:auto;}
+  text{font-family:"Hind","Avenir Next",system-ui,sans-serif;}
+  .name{font-size:12.5px;font-weight:600;fill:#1A1A1A;}
+  .sub{font-size:9px;font-weight:400;fill:#5A5A5A;}
+  .eb{font-size:7.6px;font-weight:600;letter-spacing:.10em;fill:#6B6B6B;}
+  .alab{font-size:8px;font-weight:600;letter-spacing:.08em;fill:#4A4A4A;}
+  .endname{font-size:12.5px;font-weight:600;fill:#FDFBF3;}
+  .endsub{font-size:9px;font-weight:400;fill:rgba(253,251,243,0.66);}
+  .legend{font-size:8px;letter-spacing:.06em;fill:#6B6B6B;}
+  figcaption{font-size:12.5px;color:#3C3C3C;margin:14px 0 0;max-width:58ch;}
+  .note{font-size:11px;color:var(--muted);margin:10px 0 0;}
+  .note b{font-weight:600;color:#3C3C3C;}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <p class="eyebrow">Case study · Mr. A's BAC</p>
+  <h1>How one ratio becomes a number a court will accept</h1>
+  <p class="dek">The quantification logic on slide 5: headspace GC–FID with an internal-standard
+     calibration, checked against the sample's own matrix before anything is reported.</p>
+
+  <figure style="margin:0">
+  <div class="diagram-container">
+  <svg viewBox="0 0 600 880" role="img" aria-labelledby="quantflow-title quantflow-desc" xmlns="http://www.w3.org/2000/svg">
+    <title id="quantflow-title">Quantification flow from GC–FID run to reported BAC</title>
+    <desc id="quantflow-desc">A run yields the ratio of ethanol area to internal-standard area. Two routes convert it to concentration, calibration and standard addition, which are compared; if they agree within ten percent the calibration value is reported, otherwise the standard-addition value. A limits gate then passes only values above the quantitation limit, and the report is a mean with a 95 percent confidence interval compared with the 0.08 gram per 100 millilitre threshold.</desc>
+    <defs>
+      <marker id="qf-arrow" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto">
+        <path d="M0.6 0.9 L7 4 L0.6 7.1" fill="none" stroke="#6B6F78" stroke-width="1.3"
+              stroke-linecap="round" stroke-linejoin="round"/>
+      </marker>
+    </defs>
+
+    <!-- ============ connectors first: strokes stay behind nodes ============ -->
+    <g fill="none" stroke="#6B6F78" stroke-width="1.15" marker-end="url(#qf-arrow)">
+      <!-- run -> ratio -->
+      <path d="M300 96 V120"/>
+      <!-- ratio -> two routes (split) -->
+      <path d="M288 204 V236 H160 V252"/>
+      <path d="M312 204 V236 H440 V252"/>
+    </g>
+
+    <!-- route lines into the first merge dot (no arrowheads: they end at the dot) -->
+    <g fill="none" stroke="#6B6F78" stroke-width="1.15">
+      <path d="M160 332 V356 H296"/>
+      <path d="M440 332 V356 H304"/>
+    </g>
+    <circle cx="300" cy="356" r="4" fill="#1A1A1A"/>
+
+    <g fill="none" stroke="#6B6F78" stroke-width="1.15" marker-end="url(#qf-arrow)">
+      <!-- merge -> decision -->
+      <path d="M300 360 V382"/>
+      <!-- decision: yes (right), no (left) -->
+      <path d="M416 444 H454 V542"/>
+      <path d="M300 504 V532 H146 V542"/>
+    </g>
+
+    <!-- outcomes -> second merge dot -->
+    <g fill="none" stroke="#6B6F78" stroke-width="1.15">
+      <path d="M146 608 V640 H296"/>
+      <path d="M454 608 V640 H304"/>
+    </g>
+    <circle cx="300" cy="640" r="4" fill="#1A1A1A"/>
+
+    <g fill="none" stroke="#6B6F78" stroke-width="1.15" marker-end="url(#qf-arrow)">
+      <!-- merge -> limits gate -> report -->
+      <path d="M300 644 V666"/>
+      <path d="M300 732 V754"/>
+    </g>
+
+    <!-- ============ labels (masked, 8px, on the segments) ============ -->
+    <rect x="424" y="423" width="30" height="14" fill="#FDFBF3"/>
+    <text class="alab" x="439" y="433.5" text-anchor="middle">YES</text>
+    <rect x="194" y="511" width="24" height="14" fill="#FDFBF3"/>
+    <text class="alab" x="206" y="521.5" text-anchor="middle">NO</text>
+
+    <!-- ============ nodes ============ -->
+    <!-- 1. the run -->
+    <rect x="160" y="40" width="280" height="56" rx="6" fill="#F2F0EC" stroke="rgba(26,26,26,0.30)" stroke-width="1"/>
+    <text class="name" x="300" y="66" text-anchor="middle">Headspace GC–FID run</text>
+    <text class="sub"  x="300" y="82" text-anchor="middle">blood + 0.40 g/L t-butanol → two peak areas</text>
+
+    <!-- 2. the ratio (focal) -->
+    <rect x="140" y="120" width="320" height="84" rx="6" fill="#B23A2E" fill-opacity="0.07" stroke="#B23A2E" stroke-width="1.4"/>
+    <text class="eb"   x="300" y="140" text-anchor="middle" fill="#8E2F25">THE ONLY NUMBER THAT TRAVELS</text>
+    <text class="name" x="300" y="163" text-anchor="middle" font-size="15">R = A<tspan font-size="10" dy="3">EtOH</tspan><tspan dy="-3"> ÷ A</tspan><tspan font-size="10" dy="3">IS</tspan></text>
+    <text class="sub"  x="300" y="186" text-anchor="middle">injection volume · vial pressure · detector gain all cancel</text>
+
+    <!-- 3. calibration route -->
+    <rect x="40" y="252" width="240" height="80" rx="6" fill="#FFFFFF" stroke="rgba(26,26,26,0.28)" stroke-width="1"/>
+    <text class="eb"   x="160" y="272" text-anchor="middle">ROUTE 1 · CALIBRATION</text>
+    <text class="name" x="160" y="294" text-anchor="middle">Six standards, 0.10–4.00 g/L</text>
+    <text class="sub"  x="160" y="312" text-anchor="middle">slope = F̄ ÷ [IS], Eq. 5-11</text>
+    <text class="sub"  x="160" y="325" text-anchor="middle">[EtOH] = R ÷ slope</text>
+
+    <!-- 4. standard-addition route -->
+    <rect x="320" y="252" width="240" height="80" rx="6" fill="#FFFFFF" stroke="rgba(26,26,26,0.28)" stroke-width="1"/>
+    <text class="eb"   x="440" y="272" text-anchor="middle">ROUTE 2 · STANDARD ADDITION</text>
+    <text class="name" x="440" y="294" text-anchor="middle">Four spiked aliquots</text>
+    <text class="sub"  x="440" y="312" text-anchor="middle">0 · 1 · 3 · 6 g/L added to his blood</text>
+    <text class="sub"  x="440" y="325" text-anchor="middle">x-intercept = the EtOH already there</text>
+
+    <!-- 5. decision -->
+    <path d="M300 384 L416 444 L300 504 L184 444 Z" fill="#FFFFFF" stroke="#B23A2E" stroke-width="1.3"/>
+    <text class="name" x="300" y="440" text-anchor="middle">the two routes</text>
+    <text class="name" x="300" y="456" text-anchor="middle">agree within 10 %?</text>
+
+    <!-- 6. outcome: NO (left) = the two routes disagree, so the matrix has shifted the partition -->
+    <rect x="40" y="544" width="212" height="64" rx="6" fill="#F2F0EC" stroke="rgba(26,26,26,0.30)" stroke-width="1"/>
+    <text class="name" x="146" y="571" text-anchor="middle">Report std-addition value</text>
+    <text class="sub"  x="146" y="588" text-anchor="middle">blood shifts the partition</text>
+
+    <!-- 7. outcome: YES (right) = routes agree, so the calibration slope stands -->
+    <rect x="348" y="544" width="212" height="64" rx="6" fill="#F2F0EC" stroke="rgba(26,26,26,0.30)" stroke-width="1"/>
+    <text class="name" x="454" y="571" text-anchor="middle">Report calibration value</text>
+    <text class="sub"  x="454" y="588" text-anchor="middle">the matrix behaved as assumed</text>
+
+    <!-- 8. limits gate -->
+    <rect x="120" y="668" width="360" height="64" rx="6" fill="#FFFFFF" stroke="rgba(26,26,26,0.28)" stroke-width="1"/>
+    <text class="name" x="300" y="694" text-anchor="middle">Limits gate — what may be reported</text>
+    <text class="sub"  x="300" y="712" text-anchor="middle">≥ LOQ only (10s/m) · over 4 g/L → dilute 1+1, fold back</text>
+
+    <!-- 9. the reported number -->
+    <rect x="104" y="756" width="392" height="68" rx="34" fill="#1A1A1A"/>
+    <text class="endname" x="300" y="784" text-anchor="middle">mean ± 95 % CI, g/100 mL</text>
+    <text class="endsub"  x="300" y="803" text-anchor="middle">held against 0.08 g/100 mL — the 80 mg/dL limit</text>
+
+    <!-- legend strip -->
+    <g transform="translate(40,846)">
+      <rect x="0" y="-7" width="10" height="8" fill="#F2F0EC" stroke="rgba(26,26,26,0.30)"/>
+      <text class="legend" x="16" y="0">STEP</text>
+      <path d="M78 -10 L88 -3 L78 4 L68 -3 Z" fill="#FFFFFF" stroke="#B23A2E"/>
+      <text class="legend" x="94" y="0">DECISION</text>
+      <rect x="166" y="-10" width="16" height="12" rx="6" fill="#1A1A1A"/>
+      <text class="legend" x="188" y="0">REPORTED VALUE</text>
+      <circle cx="300" cy="-3" r="3.2" fill="#1A1A1A"/>
+      <text class="legend" x="308" y="0">MERGE</text>
+    </g>
+  </svg>
+  </div>
+
+  <figcaption>Two independent routes to the same concentration. Calibration is what the standards
+  promise; standard addition is what his blood actually does. The ten-percent gap is where the method
+  admits it could be wrong — and decides which number gets reported.</figcaption>
+  </figure>
+
+  <p class="note"><b>Source:</b> Harris 8e §5-4 (internal standard, Eq. 5-11) and §5-3 (standard
+  addition); LOD = 3s/m, LOQ = 10s/m. Concentrations shown are illustrative, not Mr. A's data.</p>
+</div>
+</body>
+</html>

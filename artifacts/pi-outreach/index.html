@@ -1,0 +1,436 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="robots" content="noindex">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The 16 silent PIs — classification and drafts</title>
+<style>
+  :root {
+    color-scheme: light dark;
+    --paper: #faf8f3; --ink: #1b1b18; --muted: #6d6a60; --line: #e4e0d4;
+    --card: #fffdf8; --chip: #f1ede2;
+    --routed: #3d6b8e; --invite: #2f6f4f; --omit: #9a6b4f;
+    --mono: ui-monospace, SFMono-Regular, Menlo, monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --paper: #15161a; --ink: #eceae2; --muted: #9b978c; --line: #2b2d32;
+      --card: #1c1e23; --chip: #23262b;
+      --routed: #83aecd; --invite: #7cc49c; --omit: #cb9775;
+    }
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    margin: 0; padding: 26px 18px 60px; background: var(--paper); color: var(--ink);
+    font: 15.5px/1.55 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+  main { max-width: 720px; margin: 0 auto; }
+  .eyebrow {
+    font-size: .72rem; letter-spacing: .14em; text-transform: uppercase;
+    color: var(--muted); margin: 0 0 10px;
+  }
+  h1 {
+    font-family: ui-serif, Georgia, "Iowan Old Style", serif;
+    font-size: clamp(1.9rem, 6vw, 2.5rem); line-height: 1.1; letter-spacing: -.015em;
+    margin: 0 0 .35em; font-weight: 600;
+  }
+  .lede { color: var(--muted); font-size: 1rem; margin: 0 0 1.5em; max-width: 56ch; }
+  .lede strong { color: var(--ink); font-weight: 600; }
+
+  .stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin: 0 0 18px; }
+  .stat { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 12px 13px; }
+  .stat b { display: block; font-family: ui-serif, Georgia, serif; font-size: 1.65rem; line-height: 1; font-weight: 600; }
+  .stat span { display: block; font-size: .74rem; letter-spacing: .05em; text-transform: uppercase; color: var(--muted); margin-top: 7px; }
+  .stat.omit b { color: var(--omit); } .stat.invite b { color: var(--invite); } .stat.routed b { color: var(--routed); }
+
+  .figure { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 14px 15px 12px; margin: 0 0 26px; }
+  .figure svg { display: block; width: 100%; height: auto; }
+  .legend { display: flex; flex-wrap: wrap; gap: 12px; font-size: .78rem; color: var(--muted); margin-top: 9px; }
+  .legend i { display: inline-block; width: 9px; height: 9px; border-radius: 2px; margin-right: 5px; }
+
+  .controls { display: flex; flex-wrap: wrap; gap: 6px; margin: 0 0 22px; position: sticky; top: 0; padding: 10px 0; background: var(--paper); z-index: 5; }
+  .controls button {
+    font: inherit; font-size: .82rem; color: var(--ink); background: var(--chip);
+    border: 1px solid transparent; border-radius: 999px; padding: 6px 12px; cursor: pointer;
+  }
+  .controls button[aria-pressed="true"] { background: var(--ink); color: var(--paper); }
+  .controls button:focus-visible { outline: 2px solid var(--routed); outline-offset: 2px; }
+
+  .group { margin: 0 0 34px; }
+  .group.hide { display: none; }
+  .group-head { display: flex; align-items: baseline; gap: 10px; margin: 0 0 4px; }
+  .group-head h2 { font-size: .95rem; margin: 0; letter-spacing: -.005em; font-weight: 650; }
+  .group-head .count { font-size: .78rem; color: var(--muted); margin-left: auto; font-variant-numeric: tabular-nums; }
+  .dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 8px; vertical-align: 1px; }
+  .dot.omit { background: var(--omit); } .dot.invite { background: var(--invite); } .dot.routed { background: var(--routed); }
+  .group-note { color: var(--muted); font-size: .86rem; margin: 0 0 14px; max-width: 62ch; }
+
+  .pi { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 16px 16px 12px; margin: 0 0 12px; }
+  .pi.hide { display: none; }
+  .pi-head { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; }
+  .pi-head h3 { font-family: ui-serif, Georgia, serif; font-size: 1.12rem; margin: 0; font-weight: 600; letter-spacing: -.005em; }
+  .prog { font-size: .72rem; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); white-space: nowrap; }
+  .why { font-size: .84rem; color: var(--muted); margin: 5px 0 13px; padding-left: 10px; border-left: 2px solid var(--line); }
+  .subject { font-size: .86rem; margin: 0 0 12px; }
+  .subject .lbl { font-size: .66rem; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); display: block; margin-bottom: 2px; }
+  .subj-text { font-weight: 600; }
+  .body {
+    font-size: .84rem; line-height: 1.6; background: color-mix(in srgb, var(--chip) 55%, transparent);
+    border-radius: 9px; padding: 12px 13px; white-space: normal; overflow-wrap: anywhere;
+  }
+  .pi-foot { display: flex; align-items: center; gap: 14px; margin-top: 10px; flex-wrap: wrap; }
+  .copy {
+    font: inherit; font-size: .76rem; background: transparent; color: var(--muted);
+    border: 1px solid var(--line); border-radius: 999px; padding: 5px 11px; cursor: pointer;
+  }
+  .copy:hover { color: var(--ink); border-color: var(--muted); }
+  .copy.done { color: var(--invite); border-color: var(--invite); }
+  .pi-foot details { font-size: .78rem; color: var(--muted); flex: 1 1 220px; }
+  .pi-foot summary { cursor: pointer; }
+  .pi-foot details p { margin: 6px 0 0; }
+
+  h2.sec { font-size: .78rem; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); margin: 40px 0 12px; font-weight: 600; }
+  .plan { display: grid; gap: 8px; }
+  .wave { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 12px 14px; font-size: .87rem; }
+  .wave b { display: block; font-size: .7rem; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); margin-bottom: 4px; font-weight: 600; }
+  .rules { font-size: .87rem; color: var(--ink); padding-left: 18px; margin: 10px 0 0; }
+  .rules li { margin: 6px 0; }
+  .rules li::marker { color: var(--muted); }
+
+  footer { margin-top: 36px; padding-top: 14px; border-top: 1px solid var(--line); font-size: .78rem; color: var(--muted); }
+  footer p { margin: 0 0 6px; }
+  @media (max-width: 430px) {
+    .stats { grid-template-columns: 1fr 1fr 1fr; gap: 6px; }
+    .stat { padding: 10px; }
+    .stat b { font-size: 1.4rem; }
+    .stat span { font-size: .64rem; }
+  }
+</style>
+</head>
+<body>
+<main>
+  <p class="eyebrow">Fall 2027 cycle · outreach</p>
+  <h1>The 16 silent PIs</h1>
+  <p class="lede">Every one of these labs is silent on admissions, but <strong>only four are silent because of the department</strong>. The rest never address it. Below: the classification, then one draft per PI written to that classification.</p>
+
+  <div class="stats">
+    <div class="stat omit"><b>10</b><span>no content</span></div>
+    <div class="stat invite"><b>2</b><span>invite contact</span></div>
+    <div class="stat routed"><b>4</b><span>routed</span></div>
+  </div>
+
+  <div class="figure">
+    <svg viewBox="0 0 320 18" role="img" aria-label="Stacked bar: 10 labs have no admissions content, 2 invite contact without naming PhD students, 4 are routed to the department.">
+      <title>How the 16 silent labs split</title>
+      <desc>10 of 16 pages have no admissions content; 2 invite contact but never name PhD students; 4 document that admissions run through a program.</desc>
+      <defs><clipPath id="track"><rect x="0" y="0" width="320" height="18" rx="4"></rect></clipPath></defs>
+      <g clip-path="url(#track)">
+        <rect x="0" y="0" width="200" height="18" fill="var(--omit)"></rect>
+        <rect x="200" y="0" width="40" height="18" fill="var(--invite)"></rect>
+        <rect x="240" y="0" width="80" height="18" fill="var(--routed)"></rect>
+      </g>
+      <text x="8" y="12.5" font-size="9" fill="#fff" font-family="-apple-system, sans-serif">10 omission</text>
+      <text x="284" y="12.5" font-size="9" fill="#fff" text-anchor="end" font-family="-apple-system, sans-serif">4 routed</text>
+    </svg>
+    <div class="legend">
+      <span><i style="background:var(--omit)"></i>No admissions content (10)</span>
+      <span><i style="background:var(--invite)"></i>Invitation only (2)</span>
+      <span><i style="background:var(--routed)"></i>Departmental route (4)</span>
+    </div>
+  </div>
+
+  <div class="controls" role="group" aria-label="Filter drafts by why the lab is silent">
+    <button type="button" data-filter="all" aria-pressed="true">All 16</button>
+    <button type="button" data-filter="omission" aria-pressed="false">No content · 10</button>
+    <button type="button" data-filter="invitation" aria-pressed="false">Invitation · 2</button>
+    <button type="button" data-filter="routed" aria-pressed="false">Routed · 4</button>
+  </div>
+
+  <section class="group" data-group="omission">
+    <div class="group-head">
+      <h2><span class="dot omit"></span>No admissions content at all</h2>
+      <span class="count">10</span>
+    </div>
+    <p class="group-note">Genuine omission: no join page, no openings line, no route statement. Nine of these ten sit in rotation-model programs where labs never post slots — expected, but nothing on the page says so.</p>
+    <article class="pi" data-bucket="omission">
+      <div class="pi-head">
+        <h3>Tanja Kortemme</h3>
+        <span class="prog">UCSF</span>
+      </div>
+      <p class="why">No join page (home, research, news and contact all checked); five program affiliations.</p>
+      <div class="subject"><span class="lbl">Subject</span><span class="subj-text">Prospective PhD Applicant: TRPM8 Gating and Designed Switches</span></div>
+      <div class="body">Dear Dr. Kortemme,<br><br>I hope this email finds you well.<br><br>My name is Vincent Le, and I'm a senior biochemistry major at the University of Texas at Austin, graduating in May 2027. Since July 2024 I've worked with Andrés Jara-Oseguera on the TRPM8 cold receptor, where I mapped how the pore loop opens and closes using a 912-variant deep mutational scan and all-atom MD. I'm applying to UCSF's Biophysics and Tetrad programs for Fall 2027.<br><br>Your 2025 *Science* paper on deep-learning-guided design of dynamic proteins is why I'm writing. A pore loop that switches between conducting and non-conducting states is a conformational switch, and you design them while I'm trying to explain one that evolution built. Would you be willing to tell me whether your lab expects to take a graduate student in the 2027 cycle? I would also like to know whether a project at that interface would be possible.<br><br>I have attached my CV.<br><br>Thank you for your time and consideration.<br><br>Best,<br><br>Vincent Le Biochemistry B.S. '27, Dean's Scholars Honors Program The University of Texas at Austin vl7249@my.utexas.edu</div>
+      <div class="pi-foot">
+        <button class="copy" type="button">Copy email</button>
+        <details><summary>Why this version</summary><p>UCSF's rotation model means she cannot promise a slot before admission, so the question asks about intent and fit. The switch framing is the one place your project and her 2025 paper genuinely meet.</p></details>
+      </div>
+    </article>
+    <article class="pi" data-bucket="omission">
+      <div class="pi-head">
+        <h3>Arthur Palmer</h3>
+        <span class="prog">Columbia</span>
+      </div>
+      <p class="why">Science-only lab page; members listed without roles. Columbia BMB rotation hosting is arranged privately, never posted.</p>
+      <div class="subject"><span class="lbl">Subject</span><span class="subj-text">Prospective BMB Applicant: MD and NMR Order Parameters</span></div>
+      <div class="body">Dear Dr. Palmer,<br><br>I hope this email finds you well.<br><br>My name is Vincent Le, and I'm finishing a biochemistry degree at the University of Texas at Austin. I'm applying to Columbia's BMB program for Fall 2027. My research is on the TRPM8 cold receptor, where I built a 912-variant deep mutational scan of the pore loop and run all-atom MD to ask which conformations the variants shift.<br><br>NMR relaxation gives order parameters for motions I can only predict from trajectories. Your 2026 *JACS* paper on rotational diffusion tensors takes that comparison seriously, which is what I had been missing. I was wondering whether BMB students rotate through your lab this year, and whether you expect to take a student in the 2027 cycle.<br><br>I have attached my CV, and I'd be glad to send more detail on the scan.<br><br>Thank you for your time and consideration.<br><br>Best,<br><br>Vincent Le Biochemistry B.S. '27, Dean's Scholars Honors Program The University of Texas at Austin vl7249@my.utexas.edu</div>
+      <div class="pi-foot">
+        <button class="copy" type="button">Copy email</button>
+        <details><summary>Why this version</summary><p>Columbia posts nothing about rotation hosting, so the two-part ask is asking for information that does not exist publicly. That is what the email is for.</p></details>
+      </div>
+    </article>
+    <article class="pi" data-bucket="omission">
+      <div class="pi-head">
+        <h3>Hashim Al-Hashimi</h3>
+        <span class="prog">Columbia</span>
+      </div>
+      <p class="why">No join page and no recruiting text; six grad students, newest 2024.</p>
+      <div class="subject"><span class="lbl">Subject</span><span class="subj-text">Prospective BMB Applicant: From Sequence to Function</span></div>
+      <div class="body">Dear Dr. Al-Hashimi,<br><br>I hope this email finds you well.<br><br>My name is Vincent Le, and I'm a biochemistry senior at the University of Texas at Austin, applying to Columbia's BMB program for Fall 2027. I work on TRPM8 gating in Andrés Jara-Oseguera's lab, where I measured the functional consequences of 912 pore-loop variants and modeled the same loop in MD.<br><br>Your 2026 *Cell* paper predicting RNA cellular activity from sequence through conformational ensembles is the thermodynamic version of what my scan does phenotypically. Both try to get from sequence to function without measuring every intermediate. I was wondering whether you expect to take a graduate student in the 2027 cycle, and whether BMB students are rotating through the lab this year.<br><br>I have attached my CV.<br><br>Thank you for your time and consideration.<br><br>Best,<br><br>Vincent Le Biochemistry B.S. '27, Dean's Scholars Honors Program The University of Texas at Austin vl7249@my.utexas.edu</div>
+      <div class="pi-foot">
+        <button class="copy" type="button">Copy email</button>
+        <details><summary>Why this version</summary><p>he is Associate Dean and teaches the first-year BMB core, so he meets every incoming class. A specific, low-cost question is more useful to him than a general expression of interest.</p></details>
+      </div>
+    </article>
+    <article class="pi" data-bucket="omission">
+      <div class="pi-head">
+        <h3>Susan Marqusee</h3>
+        <span class="prog">Berkeley</span>
+      </div>
+      <p class="why">No openings text; roster is five postdocs and one grad student, and her Biophysics admits sit on the 2019 line.</p>
+      <div class="subject"><span class="lbl">Subject</span><span class="subj-text">Prospective MCB Applicant: A Gating Landscape from 912 Variants</span></div>
+      <div class="body">Dear Dr. Marqusee,<br><br>I hope this email finds you well.<br><br>My name is Vincent Le, and I'm a biochemistry senior at the University of Texas at Austin. I'm applying to Berkeley for Fall 2027. In Andrés Jara-Oseguera's lab I've spent two years on TRPM8 gating: a 912-variant deep mutational scan, all-atom MD, and the wet-lab work that goes with them, including patch clamp, smFRET, and crosslinking.<br><br>Your 2025 *Protein Science* paper on sequence and structural determinants of the folding landscape in subtilisins is close to how I think about the scan. 912 variants is an attempt to map a gating landscape the way you map a folding one. Would you be willing to tell me whether you expect to take a graduate student in the 2027 cycle, and whether MCB or Biophysics is the better route for someone with my background?<br><br>I have attached my CV.<br><br>Thank you for your time and consideration.<br><br>Best,<br><br>Vincent Le Biochemistry B.S. '27, Dean's Scholars Honors Program The University of Texas at Austin vl7249@my.utexas.edu</div>
+      <div class="pi-foot">
+        <button class="copy" type="button">Copy email</button>
+        <details><summary>Why this version</summary><p>asking which program is a real question here. Her recent students appear on the Biophysics roster only through 2019, so the route is genuinely unclear, and the question gives her something easy to answer.</p></details>
+      </div>
+    </article>
+    <article class="pi" data-bucket="omission">
+      <div class="pi-head">
+        <h3>Teresa Head-Gordon</h3>
+        <span class="prog">Berkeley</span>
+      </div>
+      <p class="why">No openings page anywhere on the site — but three 2026 grad students and two rotation students photographed in October 2026.</p>
+      <div class="subject"><span class="lbl">Subject</span><span class="subj-text">Prospective PhD Applicant: smFRET-Restrained Ensembles for a Channel</span></div>
+      <div class="body">Dear Dr. Head-Gordon,<br><br>I hope this email finds you well.<br><br>My name is Vincent Le, and I'm applying to Berkeley for Fall 2027. I work on TRPM8 gating at the University of Texas at Austin, where I built a 912-variant scan of the pore loop and run MD against smFRET distances and HDX-MS protection.<br><br>Your 2026 *Protein Science* paper restraining the disordered 4E-BP2:eIF4E ensemble with smFRET is the problem I keep running into. I have distances and a force field, and the question is how much the data actually constrains the ensemble. I was wondering whether your group expects to take a graduate student in the 2027 cycle, and which program, Chemistry, CBE, or Bioengineering, you would point someone with my background toward.<br><br>I have attached my CV.<br><br>Thank you for your time and consideration.<br><br>Best,<br><br>Vincent Le Biochemistry B.S. '27, Dean's Scholars Honors Program The University of Texas at Austin vl7249@my.utexas.edu</div>
+      <div class="pi-foot">
+        <button class="copy" type="button">Copy email</button>
+        <details><summary>Why this version</summary><p>she is absent from the Biophysics roster, so "which program" is a real question and not filler. The roster shows two October 2026 rotation students, which makes a reply likelier.</p></details>
+      </div>
+    </article>
+    <article class="pi" data-bucket="omission">
+      <div class="pi-head">
+        <h3>Bronwyn Lucas</h3>
+        <span class="prog">Berkeley</span>
+      </div>
+      <p class="why">Seven pages checked, none recruiting; one Biophysics student, 2023.</p>
+      <div class="subject"><span class="lbl">Subject</span><span class="subj-text">Prospective Biophysics Applicant: In Situ Cryo-EM of a Membrane Channel</span></div>
+      <div class="body">Dear Dr. Lucas,<br><br>I hope this email finds you well.<br><br>My name is Vincent Le, and I'm a biochemistry senior at the University of Texas at Austin, applying to Berkeley's Biophysics program for Fall 2027. I study TRPM8 gating with 912 pore-loop variants, MD, and crosslinking, and the states I care about only exist in a membrane.<br><br>Your 2026 work on cryo-FIB lamellae and Leopard-EM would let someone look at a channel in situ rather than in a detergent micelle. Would you be willing to tell me whether you expect to take a graduate student in the 2027 cycle, and whether an in situ project on a polymodal channel is something your lab would consider?<br><br>I have attached my CV.<br><br>Thank you for your time and consideration.<br><br>Best,<br><br>Vincent Le Biochemistry B.S. '27, Dean's Scholars Honors Program The University of Texas at Austin vl7249@my.utexas.edu</div>
+      <div class="pi-foot">
+        <button class="copy" type="button">Copy email</button>
+        <details><summary>Why this version</summary><p>she started in 2023 and has one student, so the capacity question has a real answer and a reply is cheap for her. This is the highest-value cold email on the list.</p></details>
+      </div>
+    </article>
+    <article class="pi" data-bucket="omission">
+      <div class="pi-head">
+        <h3>Soichi Wakatsuki</h3>
+        <span class="prog">Stanford</span>
+      </div>
+      <p class="why">The profile's lab link is not a recruiting page; active doctoral advisees are listed.</p>
+      <div class="subject"><span class="lbl">Subject</span><span class="subj-text">Prospective Structural Biology Applicant: Time-Resolved Methods for Gating</span></div>
+      <div class="body">Dear Dr. Wakatsuki,<br><br>I hope this email finds you well.<br><br>My name is Vincent Le, and I'm applying to Stanford's Structural Biology program for Fall 2027. At the University of Texas at Austin I work on TRPM8 gating with a 912-variant deep mutational scan and MD, and I spent last summer at UCSF on PARP14 with crosslinking and crystallography.<br><br>Your 2026 work on mix-and-inject time-resolved MicroED is the direction I'd want my own project to go. The gating intermediates I model are exactly the states a time-resolved experiment could catch. I was wondering whether you expect to take a graduate student in the 2027 cycle, and whether SLAC-based time-resolved work would be part of a student's project.<br><br>I have attached my CV.<br><br>Thank you for your time and consideration.<br><br>Best,<br><br>Vincent Le Biochemistry B.S. '27, Dean's Scholars Honors Program The University of Texas at Austin vl7249@my.utexas.edu</div>
+      <div class="pi-foot">
+        <button class="copy" type="button">Copy email</button>
+        <details><summary>Why this version</summary><p>Stanford Biosciences assigns by program and rotation, so the availability question is legitimately about intent. The SLAC question is the one only he can answer.</p></details>
+      </div>
+    </article>
+    <article class="pi" data-bucket="omission">
+      <div class="pi-head">
+        <h3>Benoit Roux</h3>
+        <span class="prog">UChicago</span>
+      </div>
+      <p class="why">BMB profile lists programs, no recruiting language; rouxlab.uchicago.edu does not resolve.</p>
+      <div class="subject"><span class="lbl">Subject</span><span class="subj-text">Prospective BSD Applicant: Voltage Gating and Markov State Models</span></div>
+      <div class="body">Dear Dr. Roux,<br><br>I hope this email finds you well.<br><br>My name is Vincent Le, and I'm a biochemistry senior at the University of Texas at Austin, applying to UChicago's Biosciences programs for Fall 2027. My project is TRPM8 gating, a 912-variant deep mutational scan of the pore loop plus all-atom MD and Markov state analysis of the same loop.<br><br>Your 2026 *Nature Communications* paper on the structural basis of voltage gating in a partially activated K+ channel, and the MSM and transition-path work on ion conduction, are the closest thing in the literature to what I'm trying to do on a voltage-dependent TRPM channel. Would you be willing to tell me whether you expect to take a graduate student in the 2027 cycle, and whether a channel-gating project is available?<br><br>I have attached my CV.<br><br>Thank you for your time and consideration.<br><br>Best,<br><br>Vincent Le Biochemistry B.S. '27, Dean's Scholars Honors Program The University of Texas at Austin vl7249@my.utexas.edu</div>
+      <div class="pi-foot">
+        <button class="copy" type="button">Copy email</button>
+        <details><summary>Why this version</summary><p>the strongest scientific overlap of the sixteen. The MSM and transition-path framing is his language, and it is accurate, because you have trajectories and a phenotype to connect.</p></details>
+      </div>
+    </article>
+    <article class="pi" data-bucket="omission">
+      <div class="pi-head">
+        <h3>Rama Ranganathan</h3>
+        <span class="prog">UChicago</span>
+      </div>
+      <p class="why">Lab site has no join page; the news feed has been stale since 2018.</p>
+      <div class="subject"><span class="lbl">Subject</span><span class="subj-text">Prospective BSD Applicant: Allostery and Ion Conduction</span></div>
+      <div class="body">Dear Dr. Ranganathan,<br><br>I hope this email finds you well.<br><br>My name is Vincent Le, and I'm applying to UChicago for Fall 2027. At the University of Texas at Austin I work on TRPM8 gating with 912 pore-loop variants, MD, and electrophysiology.<br><br>Two of your papers frame my project better than I've been able to. The 2026 *Biophysical Journal* work on the core physical principles of allostery is the theory of what a pore-loop mutation does to coupling, and the 2025 *Cell* paper visualizing electric-field-stimulated ion conduction in a potassium channel is the measurement I wish I could make. I was wondering whether you expect to take a graduate student in the 2027 cycle.<br><br>I have attached my CV.<br><br>Thank you for your time and consideration.<br><br>Best,<br><br>Vincent Le Biochemistry B.S. '27, Dean's Scholars Honors Program The University of Texas at Austin vl7249@my.utexas.edu</div>
+      <div class="pi-foot">
+        <button class="copy" type="button">Copy email</button>
+        <details><summary>Why this version</summary><p>his lab site is stale, with news since 2018, so a short and specific email has to establish that you read the science rather than the website.</p></details>
+      </div>
+    </article>
+    <article class="pi" data-bucket="omission">
+      <div class="pi-head">
+        <h3>Milo Lin</h3>
+        <span class="prog">UTSW</span>
+      </div>
+      <p class="why">No openings statement on the lab or the profile page. The profile lists Molecular Biophysics among his graduate programs.</p>
+      <div class="subject"><span class="lbl">Subject</span><span class="subj-text">Prospective PhD Applicant: Conformational Fluctuations That Carry the Gating Signal</span></div>
+      <div class="body">Dear Dr. Lin,<br><br>I hope this email finds you well.<br><br>My name is Vincent Le, and I'm a biochemistry senior at the University of Texas at Austin, graduating in May 2027. Since July 2024 I've worked with Andrés Jara-Oseguera on the TRPM8 cold receptor, where I mapped how the pore loop opens and closes with a 912-variant deep mutational scan and all-atom MD. I'm applying to UT Southwestern's Molecular Biophysics program for Fall 2027.<br><br>Your 2025 paper on sparse networks of conformational fluctuations is why I'm writing. The scan gives me per-residue effects and the simulations give me trajectories, but neither tells me which motions actually carry the gating signal from the pore into the rest of the protein. The network analysis you describe is the piece I don't have, and I would like to learn how to build it properly. I was wondering whether you expect to take a graduate student in the 2027 cycle.<br><br>I have attached my CV.<br><br>Thank you for your time and consideration.<br><br>Best,<br><br>Vincent Le Biochemistry B.S. '27, Dean's Scholars Honors Program The University of Texas at Austin vl7249@my.utexas.edu</div>
+      <div class="pi-foot">
+        <button class="copy" type="button">Copy email</button>
+        <details><summary>Why this version</summary><p>the fit is method, not subject. You generate the ensemble; he asks which fluctuations inside it do the work, which is the question your scan and your trajectories cannot answer alone. His profile lists Molecular Biophysics among his graduate programs, so this is the same application route you are already taking, and his lab page carries no openings statement, which makes the question fair to ask.  ---</p></details>
+      </div>
+    </article>
+  </section>
+  <section class="group" data-group="invitation">
+    <div class="group-head">
+      <h2><span class="dot invite"></span>Invites contact, but never names PhD students</h2>
+      <span class="count">2</span>
+    </div>
+    <p class="group-note">The page asks you to write, which is not the same as saying they are taking students.</p>
+    <article class="pi" data-bucket="invitation">
+      <div class="pi-head">
+        <h3>Ron Dror</h3>
+        <span class="prog">Stanford</span>
+      </div>
+      <p class="why">Join page welcomes postdocs, graduate students and undergraduates, and invites pre-application inquiries — no 2027 commitment.</p>
+      <div class="subject"><span class="lbl">Subject</span><span class="subj-text">Pre-Application Inquiry: CLC Gating and TRPM8 Dynamics</span></div>
+      <div class="body">Dear Dr. Dror,<br><br>I hope this email finds you well.<br><br>My name is Vincent Le, and I'm applying to Stanford's Biophysics and Structural Biology programs for Fall 2027. Your join page invites pre-application inquiries, so I'm writing. I work on TRPM8 gating at the University of Texas at Austin, with a 912-variant deep mutational scan of the pore loop and all-atom MD of the same loop.<br><br>Your 2026 *PNAS* paper on renal CLC chloride-channel gating and the 2024 *eLife* CLC-2 ball-and-chain work are the closest match to what I do, a channel whose gate is a moving piece of the protein, studied by simulation against electrophysiology. I was wondering whether you expect to welcome a rotation student in the 2027 cycle, and whether a channel-mechanism project with experimental collaborators is realistic for a student in your lab.<br><br>I have attached my CV.<br><br>Thank you for your time and consideration.<br><br>Best,<br><br>Vincent Le Biochemistry B.S. '27, Dean's Scholars Honors Program The University of Texas at Austin vl7249@my.utexas.edu</div>
+      <div class="pi-foot">
+        <button class="copy" type="button">Copy email</button>
+        <details><summary>Why this version</summary><p>he explicitly invites the email, so the 2027 question is appropriate. Ask about rotation capacity rather than a slot, because that is the only thing his page supports.</p></details>
+      </div>
+    </article>
+    <article class="pi" data-bucket="invitation">
+      <div class="pi-head">
+        <h3>Lukasz Joachimiak</h3>
+        <span class="prog">UTSW</span>
+      </div>
+      <p class="why">“Join Us — reach out to learn more about open positions” — never says PhD students, no dated posting.</p>
+      <div class="subject"><span class="lbl">Subject</span><span class="subj-text">Prospective UTSW Applicant: Large-Scale Mutagenesis of a Gating Landscape</span></div>
+      <div class="body">Dear Dr. Joachimiak,<br><br>I hope this email finds you well.<br><br>My name is Vincent Le, and I'm applying to UT Southwestern for Fall 2027. My project at the University of Texas at Austin is a 912-variant deep mutational scan of the TRPM8 pore loop, paired with MD, asking which sequence changes shift the open and closed balance.<br><br>Your 2026 preprint using large-scale mutagenesis to find sequence changes that bias tau toward CTE-like aggregation is the same experiment on a different protein. Many variants, one aggregation phenotype, and the hard part is interpreting what the hits mean structurally. Would you be willing to tell me whether you expect to take a graduate student in the 2027 cycle, and whether the lab's mutagenesis work is where a new student would start?<br><br>I have attached my CV.<br><br>Thank you for your time and consideration.<br><br>Best,<br><br>Vincent Le Biochemistry B.S. '27, Dean's Scholars Honors Program The University of Texas at Austin vl7249@my.utexas.edu</div>
+      <div class="pi-foot">
+        <button class="copy" type="button">Copy email</button>
+        <details><summary>Why this version</summary><p>his "Join Us" line is an invitation, so the availability question is fair game. He never says PhD, so ask it plainly rather than assuming.  ---</p></details>
+      </div>
+    </article>
+  </section>
+  <section class="group" data-group="routed">
+    <div class="group-head">
+      <h2><span class="dot routed"></span>Routed to the department</h2>
+      <span class="count">4</span>
+    </div>
+    <p class="group-note">The lab or its institute states admissions run through a program, so the missing slot announcement is policy, not oversight.</p>
+    <article class="pi" data-bucket="routed">
+      <div class="pi-head">
+        <h3>Sergey Ovchinnikov</h3>
+        <span class="prog">MIT</span>
+      </div>
+      <p class="why">“cannot take students directly… must apply to one of the MIT PhD programs” — names Biology, CSB, Microbiology.</p>
+      <div class="subject"><span class="lbl">Subject</span><span class="subj-text">Prospective MIT Biology Applicant: Dynamics from Sparse Data</span></div>
+      <div class="body">Dear Dr. Ovchinnikov,<br><br>I hope this email finds you well.<br><br>My name is Vincent Le, and I'm applying to MIT Biology for Fall 2027. I know from your join page that students come through the programs rather than the lab directly, so this isn't a recruiting question. I work on TRPM8 gating with a 912-variant scan plus MD, and the thing I can't measure is the intermediate states between open and closed.<br><br>Your 2026 *Nature* paper on learning millisecond dynamics from what's missing in NMR spectra is the closest attack on that problem I've read. I was wondering whether a student entering through Biology could work on that kind of inference, or whether the lab's current direction has moved elsewhere. If a short conversation is possible before the deadline, I would value it.<br><br>I have attached my CV.<br><br>Thank you for your time and consideration.<br><br>Best,<br><br>Vincent Le Biochemistry B.S. '27, Dean's Scholars Honors Program The University of Texas at Austin vl7249@my.utexas.edu</div>
+      <div class="pi-foot">
+        <button class="copy" type="button">Copy email</button>
+        <details><summary>Why this version</summary><p>saying "this isn't a recruiting question" is the whole point. It shows you did the homework and spares him the reply he is probably tired of writing.</p></details>
+      </div>
+    </article>
+    <article class="pi" data-bucket="routed">
+      <div class="pi-head">
+        <h3>Olga Boudker</h3>
+        <span class="prog">Tri-I</span>
+      </div>
+      <p class="why">No lab statement; the TPCB faculty directory is the authoritative channel — a TPCB alumna (Ciftci, PhD 2021) came through it.</p>
+      <div class="subject"><span class="lbl">Subject</span><span class="subj-text">Prospective Tri-I Applicant: Transport and Gating as One Landscape</span></div>
+      <div class="body">Dear Dr. Boudker,<br><br>I hope this email finds you well.<br><br>My name is Vincent Le, and I'm applying to the Tri-Institutional programs for Fall 2027. I work on TRPM8 gating at the University of Texas at Austin, with a 912-variant deep mutational scan of the pore loop and all-atom MD.<br><br>Your 2026 preprint on multimodal dynamics controlling a glial glutamate transporter is the same problem I'm working on in a channel. The protein moves between states on a membrane, and the dynamics and the function are the same question. I know TPCB students are the route into the lab, so I was wondering whether you expect to take a TPCB or DRP student in the 2027 cycle, and whether transport dynamics is where a new student would fit.<br><br>I have attached my CV.<br><br>Thank you for your time and consideration.<br><br>Best,<br><br>Vincent Le Biochemistry B.S. '27, Dean's Scholars Honors Program The University of Texas at Austin vl7249@my.utexas.edu</div>
+      <div class="pi-foot">
+        <button class="copy" type="button">Copy email</button>
+        <details><summary>Why this version</summary><p>naming TPCB explicitly is the homework signal. The transporter to channel comparison is real and not flattery.</p></details>
+      </div>
+    </article>
+    <article class="pi" data-bucket="routed">
+      <div class="pi-head">
+        <h3>David Baker</h3>
+        <span class="prog">UW</span>
+      </div>
+      <p class="why">No Baker-lab sentence; IPD accepts graduate researchers from several departments and says “you must be enrolled in one of these UW programs.”</p>
+      <div class="subject"><span class="lbl">Subject</span><span class="subj-text">Prospective UW Applicant: Is Gating Designable?</span></div>
+      <div class="body">Dear Dr. Baker,<br><br>I hope this email finds you well.<br><br>My name is Vincent Le, and I'm applying to UW for Fall 2027. I know IPD students come through the departments, so I'm not asking about a slot. I work on TRPM8 gating with 912 pore-loop variants and MD, and your 2025 *Nature* paper designing Ca²⁺ channels from selectivity-filter geometry is the paper I keep coming back to.<br><br>You designed the filter. The harder half seems to be the gate, a designed channel that opens and closes on cue rather than one that only conducts. I was wondering whether gating is designable with current methods, and whether that is a question an IPD student could take on.<br><br>I have attached my CV.<br><br>Thank you for your time and consideration.<br><br>Best,<br><br>Vincent Le Biochemistry B.S. '27, Dean's Scholars Honors Program The University of Texas at Austin vl7249@my.utexas.edu</div>
+      <div class="pi-foot">
+        <button class="copy" type="button">Copy email</button>
+        <details><summary>Why this version</summary><p>a genuine scientific question he may enjoy answering, and no admissions ask. That respects the IPD route without pretending the email is pointless.</p></details>
+      </div>
+    </article>
+    <article class="pi" data-bucket="routed">
+      <div class="pi-head">
+        <h3>Frank DiMaio</h3>
+        <span class="prog">UW</span>
+      </div>
+      <p class="why">Lab site has no openings page (last updated around 2019); UW's BPSD program says contacting faculty does not affect admission.</p>
+      <div class="subject"><span class="lbl">Subject</span><span class="subj-text">Question About Crosslink Restraints in Cryo-EM Model Building</span></div>
+      <div class="body">Dear Dr. DiMaio,<br><br>I hope this email finds you well.<br><br>My name is Vincent Le. I'm not writing to ask about admissions, since I understand UW's program handles that. I have a methods question. I work on TRPM8 gating at the University of Texas at Austin, where I generated crosslinks across the pore loop and modeled the same loop in MD. The crosslinks constrain which conformations are possible, but they are sparse and noisy.<br><br>Your 2025 *Structure* paper on density- and energy-guided identification of small molecules, and the RFdiffusion3 work, made me wonder whether crosslink-derived distance restraints could be folded into model building at moderate resolution, or whether the restraint uncertainty makes that a dead end. If you have a view, I would value hearing it.<br><br>Thank you for your time and consideration.<br><br>Best,<br><br>Vincent Le Biochemistry B.S. '27, Dean's Scholars Honors Program The University of Texas at Austin vl7249@my.utexas.edu</div>
+      <div class="pi-foot">
+        <button class="copy" type="button">Copy email</button>
+        <details><summary>Why this version</summary><p>UW BPSD says emailing faculty does not help admission, so this email asks for nothing it cannot deliver. A methods question is the only kind worth sending here.</p></details>
+      </div>
+    </article>
+  </section>
+
+  <h2 class="sec">Send this week</h2>
+  <div class="plan">
+    <div class="wave"><b>Wave 1 · highest expected value</b>Lucas, Marqusee, Head-Gordon (new or small labs, rotation-active), Jiang (warm), Roux and Ranganathan (strongest science match).</div>
+    <div class="wave"><b>Wave 2 · strong but busier</b>Kortemme, Palmer, Al-Hashimi, Wakatsuki, Boudker.</div>
+    <div class="wave"><b>Wave 3 · low expected reply, still worth it</b>Ovchinnikov, Baker, DiMaio, Joachimiak, Dror.</div>
+  </div>
+  <ul class="rules">
+    <li>Berkeley closes November 30 — the six-to-eight-week window is gone. One or two a day, so follow-ups stay easy to tailor.</li>
+    <li>One email, one PI. No CC. Attach <code>Le_Vincent_CV.pdf</code>, not <code>CV_final_v3.pdf</code>.</li>
+    <li>Follow up once after about seven days, in the same thread: “I wanted to make sure this didn’t get buried — I know it’s deadline season.” Then stop.</li>
+    <li>If the answer is “not taking students,” ask whether anyone in the department is. That question is free and occasionally productive.</li>
+  </ul>
+
+  <footer>
+    <p>Scaffolds, not send-ready text. Every claim is drawn from the applicant’s record; cut anything that overstates. Addresses are deliberately blank — take each from the lab’s contact page rather than guessing a format.</p>
+    <p>Classification reflects public pages as of 10 November 2026. “Confirmed” would require a quotable statement; absence of one is not a no.</p>
+  </footer>
+</main>
+<script>
+  const buttons = Array.from(document.querySelectorAll('.controls button'));
+  const arts = Array.from(document.querySelectorAll('.pi'));
+  const groups = Array.from(document.querySelectorAll('.group'));
+  buttons.forEach(btn => btn.addEventListener('click', () => {
+    const f = btn.dataset.filter;
+    buttons.forEach(b => b.setAttribute('aria-pressed', String(b === btn)));
+    arts.forEach(a => a.classList.toggle('hide', f !== 'all' && a.dataset.bucket !== f));
+    groups.forEach(g => g.classList.toggle('hide', f !== 'all' && g.dataset.group !== f));
+  }));
+
+  function legacyCopy(text) {
+    const ta = document.createElement('textarea');
+    ta.value = text; ta.setAttribute('readonly', '');
+    ta.style.position = 'fixed'; ta.style.top = '-1000px';
+    document.body.appendChild(ta); ta.select();
+    let ok = false;
+    try { ok = document.execCommand('copy'); } catch (e) {}
+    document.body.removeChild(ta);
+    return ok;
+  }
+
+  document.querySelectorAll('.copy').forEach(btn => {
+    btn.addEventListener('click', async () => {
+      const card = btn.closest('.pi');
+      const subj = card.querySelector('.subj-text').textContent.trim();
+      const text = 'Subject: ' + subj + '\n\n' + card.querySelector('.body').innerText.trim();
+      let ok = false;
+      try { await navigator.clipboard.writeText(text); ok = true; } catch (e) { ok = legacyCopy(text); }
+      btn.textContent = ok ? 'Copied' : 'Select manually';
+      btn.classList.toggle('done', ok);
+      setTimeout(() => { btn.textContent = 'Copy email'; btn.classList.remove('done'); }, 1800);
+    });
+  });
+</script>
+</body>
+</html>
