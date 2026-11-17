@@ -1,0 +1,391 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Interactive schematic: how membrane tension flattens the Piezo1 dome and opens its pore.">
+<meta name="robots" content="noindex">
+<title>Piezo1: the dome that opens a pore</title>
+<style>
+  :root {
+    color-scheme: light dark;
+    --bg: #fbfaf7;
+    --panel: #ffffff;
+    --fg: #1a1a1c;
+    --muted: #6a6a72;
+    --rule: #e2e0da;
+    --membrane: #d5e4f0;
+    --membrane-line: #7ba2bf;
+    --blade: #2f3a46;
+    --accent: #a83a30;
+    --accent-soft: #f0d9d5;
+    --grid: #eceae4;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #15161a;
+      --panel: #1b1d22;
+      --fg: #ecebe6;
+      --muted: #9a9aa2;
+      --rule: #2c2e35;
+      --membrane: #24384a;
+      --membrane-line: #5d8cab;
+      --blade: #cfd6df;
+      --accent: #e0786c;
+      --accent-soft: #3d2422;
+      --grid: #24262c;
+    }
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    padding: 32px 20px 56px;
+    background: var(--bg);
+    color: var(--fg);
+    font: 16px/1.6 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+  main { max-width: 700px; margin: 0 auto; }
+  h1 {
+    font: 600 1.7rem/1.18 "Iowan Old Style", "Palatino Linotype", Georgia, serif;
+    letter-spacing: -.01em;
+    margin: 0 0 .35em;
+  }
+  .lede { color: var(--muted); margin: 0 0 1.6em; max-width: 46ch; }
+  .card {
+    background: var(--panel);
+    border: 1px solid var(--rule);
+    border-radius: 14px;
+    padding: 18px;
+    margin: 0 0 16px;
+  }
+  .card h2 {
+    font-size: .74rem;
+    font-weight: 650;
+    margin: 0 0 .9em;
+    text-transform: uppercase;
+    letter-spacing: .09em;
+    color: var(--muted);
+  }
+  figure { margin: 0; }
+  svg { display: block; width: 100%; height: auto; }
+  .controls {
+    display: flex; align-items: center; gap: 14px;
+    margin-top: 10px; padding-top: 14px; border-top: 1px solid var(--rule);
+  }
+  .controls label { font-size: .8rem; color: var(--muted); white-space: nowrap; }
+  input[type=range] {
+    flex: 1; -webkit-appearance: none; appearance: none;
+    height: 22px; background: transparent; cursor: pointer;
+  }
+  input[type=range]::-webkit-slider-runnable-track {
+    height: 4px; border-radius: 2px;
+    background: linear-gradient(90deg, var(--membrane-line), var(--accent));
+  }
+  input[type=range]::-webkit-slider-thumb {
+    -webkit-appearance: none; margin-top: -7px;
+    width: 18px; height: 18px; border-radius: 50%;
+    background: var(--panel); border: 2px solid var(--accent);
+  }
+  #readout {
+    font-variant-numeric: tabular-nums;
+    font-size: .8rem; color: var(--muted);
+    min-width: 9.5em; text-align: right;
+  }
+  .grid {
+    display: grid; grid-template-columns: 190px 1fr; gap: 20px; align-items: start;
+  }
+  @media (max-width: 560px) { .grid { grid-template-columns: 1fr; } }
+  .legend {
+    display: flex; flex-wrap: wrap; gap: 6px 18px;
+    margin: 4px 0 0; padding: 0; list-style: none;
+    font-size: .78rem; color: var(--muted);
+  }
+  .legend li { display: flex; align-items: center; gap: 7px; }
+  .swatch { width: 16px; height: 8px; border-radius: 2px; display: inline-block; }
+  ol { margin: .2em 0 0; padding-left: 1.2em; }
+  li { margin: .5em 0; }
+  .note { font-size: .86rem; color: var(--muted); }
+  .note strong { color: var(--fg); font-weight: 600; }
+  .cap { font-size: .8rem; color: var(--muted); margin: 8px 0 0; }
+  footer { margin-top: 26px; font-size: .78rem; color: var(--muted); line-height: 1.55; }
+  footer a { color: inherit; }
+  .pill {
+    display: inline-block; font-size: .72rem; letter-spacing: .04em;
+    text-transform: uppercase; padding: 2px 8px; border-radius: 99px;
+    border: 1px solid var(--rule); color: var(--muted);
+  }
+</style>
+</head>
+<body>
+<main>
+
+  <h1>Piezo1: the dome that opens a pore</h1>
+  <p class="lede">The channel bends the membrane into a dome. Membrane tension makes the flatter shape cheaper, and the flattening is geared to the gate. Drag the slider to see the two move together.</p>
+
+  <section class="card">
+    <h2>Side view, cross-section</h2>
+    <figure>
+      <svg id="side" viewBox="0 0 640 330" role="img" aria-labelledby="sideTitle sideDesc">
+        <title id="sideTitle">Cross-section of Piezo1 in the membrane</title>
+        <desc id="sideDesc">A curved membrane dome held by the channel blades, with a central pore and an extracellular cap. As tension increases the dome flattens, the cap lifts and the pore widens.</desc>
+
+        <!-- labels -->
+        <text x="16" y="112" font-family="inherit" font-size="11" letter-spacing=".12em" fill="var(--muted)">EXTRACELLULAR</text>
+        <text x="16" y="252" font-family="inherit" font-size="11" letter-spacing=".12em" fill="var(--muted)">CYTOPLASM</text>
+
+        <!-- tension arrows -->
+        <g id="tension-arrows" stroke="var(--accent)" stroke-width="2" fill="none">
+          <line id="tl-line" x1="150" y1="124" x2="120" y2="124"/>
+          <polygon id="tl-head" points="120,124 128,120 128,128" fill="var(--accent)" stroke="none"/>
+          <line id="tr-line" x1="490" y1="124" x2="520" y2="124"/>
+          <polygon id="tr-head" points="520,124 512,120 512,128" fill="var(--accent)" stroke="none"/>
+        </g>
+        <text x="320" y="104" text-anchor="middle" font-family="inherit" font-size="11" fill="var(--muted)">lateral membrane tension</text>
+
+        <!-- bilayer -->
+        <path id="bilayer" fill="var(--membrane)" stroke="none"/>
+        <path id="leaflet-top" fill="none" stroke="var(--membrane-line)" stroke-width="2.2" stroke-linecap="round"/>
+        <path id="leaflet-bot" fill="none" stroke="var(--membrane-line)" stroke-width="2.2" stroke-linecap="round"/>
+
+        <!-- blades -->
+        <path id="blade-l" fill="none" stroke="var(--blade)" stroke-width="7" stroke-linecap="round"/>
+        <path id="blade-r" fill="none" stroke="var(--blade)" stroke-width="7" stroke-linecap="round"/>
+
+        <!-- pore helices -->
+        <rect id="helix-l" rx="5" fill="var(--blade)"/>
+        <rect id="helix-r" rx="5" fill="var(--blade)"/>
+
+        <!-- ion flux -->
+        <g id="ions" opacity="0">
+          <line id="ion-line" x1="320" y1="0" x2="320" y2="0" stroke="var(--accent)" stroke-width="2.2"/>
+          <polygon id="ion-head" fill="var(--accent)"/>
+          <circle id="ion-a" r="2.6" fill="var(--accent)"/>
+          <circle id="ion-b" r="2.6" fill="var(--accent)"/>
+        </g>
+
+        <!-- cap -->
+        <g id="cap">
+          <ellipse id="cap-body" fill="var(--accent-soft)" stroke="var(--accent)" stroke-width="1.6"/>
+        </g>
+      </svg>
+    </figure>
+
+    <ul class="legend">
+      <li><span class="swatch" style="background:var(--membrane);border:1px solid var(--membrane-line)"></span>lipid bilayer</li>
+      <li><span class="swatch" style="background:var(--blade)"></span>blade (3 per channel)</li>
+      <li><span class="swatch" style="background:var(--accent-soft);border:1px solid var(--accent)"></span>extracellular cap</li>
+      <li><span class="swatch" style="background:var(--accent)"></span>tension, ion flow</li>
+    </ul>
+
+    <div class="controls">
+      <label for="tension">membrane tension</label>
+      <input id="tension" type="range" min="0" max="100" value="12" step="1" aria-label="membrane tension">
+      <span id="readout">dome: deep<br>gate: closed</span>
+    </div>
+    <p class="cap">Schematic and not to scale. The real protein is a trimer with 38 transmembrane helices; this is one cross-section through it.</p>
+  </section>
+
+  <section class="card">
+    <h2>Two ways to see the same change</h2>
+    <div class="grid">
+      <figure>
+        <svg id="top" viewBox="0 0 200 200" role="img" aria-labelledby="topTitle">
+          <title id="topTitle">Top view of the three blades</title>
+          <circle cx="100" cy="100" r="88" fill="none" stroke="var(--grid)" stroke-width="1"/>
+          <g id="blades-top" fill="none" stroke="var(--blade)" stroke-width="13" stroke-linecap="round"></g>
+          <circle id="pore-top" cx="100" cy="100" fill="var(--accent-soft)" stroke="var(--accent)" stroke-width="1.6"/>
+          <text x="100" y="192" text-anchor="middle" font-family="inherit" font-size="11" fill="var(--muted)">top view: blades splay outward</text>
+        </svg>
+      </figure>
+      <figure>
+        <svg id="energy" viewBox="0 0 300 200" role="img" aria-labelledby="enTitle enDesc">
+          <title id="enTitle">Free energy against dome flattening</title>
+          <desc id="enDesc">A parabola whose minimum moves toward the flattened state as tension rises.</desc>
+          <line x1="42" y1="100" x2="292" y2="100" stroke="var(--grid)" stroke-width="1"/>
+          <line x1="42" y1="24" x2="42" y2="176" stroke="var(--grid)" stroke-width="1"/>
+          <path id="e-curve" fill="none" stroke="var(--accent)" stroke-width="2.4"/>
+          <circle id="e-dot" r="5" fill="var(--accent)"/>
+          <text id="e-label" x="0" y="0" font-family="inherit" font-size="10.5" fill="var(--muted)">preferred state</text>
+          <text x="160" y="194" text-anchor="middle" font-family="inherit" font-size="11" fill="var(--muted)">flattening of the dome →</text>
+          <text x="18" y="100" text-anchor="middle" font-family="inherit" font-size="11" fill="var(--muted)" transform="rotate(-90 18 100)">free energy</text>
+        </svg>
+      </figure>
+    </div>
+    <p class="cap">Left: the three blades rotate outward as the dome flattens. Right: tension adds a term −γΔA, so the minimum of the free energy slides toward the flat, open state.</p>
+  </section>
+
+  <section class="card">
+    <h2>What to notice</h2>
+    <ol>
+      <li>The membrane is not being pressed. It is bent because the protein's blades are curved, and the bilayer has to follow them.</li>
+      <li>Flattening increases the channel's in-plane footprint. Under tension, that larger footprint is energetically cheaper, which is the whole engine of the sensor.</li>
+      <li>The gate only has to widen by about an ångström, while the area change is on the order of 100 nm². That decoupling is why Piezo can be sensitive and still be a narrow, selective pore.</li>
+    </ol>
+  </section>
+
+  <section class="card">
+    <h2>What is settled, what is not</h2>
+    <p class="note"><strong>Settled:</strong> the closed state is curved and deforms the membrane; tension favours a flatter conformation; the blades are coupled to the pore through the intracellular beams and the cap. <strong>Argued:</strong> the exact sequence and the degree of flattening in a true open state. High-resolution open structures are hard to obtain, and much of the evidence comes from gain-of-function mutants, simulations, and direct measurements of blade expansion in membranes. Treat the animation as the right cartoon, not as a solved trajectory.</p>
+  </section>
+
+  <footer>
+    Based on Guo &amp; MacKinnon, “Structure-based membrane dome mechanism for Piezo channels,” eLife 2017, and later structural work including “Direct observation of the conformational states of PIEZO1,” Nature 2023. The channel itself is from Coste et al., Science 2010.
+  </footer>
+
+</main>
+
+<script>
+(function () {
+  var DEEP = 72, FLAT = 8;
+  var TOP = 138, THICK = 24;
+
+  var el = {
+    bilayer: document.getElementById('bilayer'),
+    lt: document.getElementById('leaflet-top'),
+    lb: document.getElementById('leaflet-bot'),
+    bladeL: document.getElementById('blade-l'),
+    bladeR: document.getElementById('blade-r'),
+    hl: document.getElementById('helix-l'),
+    hr: document.getElementById('helix-r'),
+    cap: document.getElementById('cap-body'),
+    ions: document.getElementById('ions'),
+    ionLine: document.getElementById('ion-line'),
+    ionHead: document.getElementById('ion-head'),
+    ionA: document.getElementById('ion-a'),
+    ionB: document.getElementById('ion-b'),
+    tlLine: document.getElementById('tl-line'),
+    tlHead: document.getElementById('tl-head'),
+    trLine: document.getElementById('tr-line'),
+    trHead: document.getElementById('tr-head'),
+    bladesTop: document.getElementById('blades-top'),
+    poreTop: document.getElementById('pore-top'),
+    eCurve: document.getElementById('e-curve'),
+    eDot: document.getElementById('e-dot'),
+    eLabel: document.getElementById('e-label'),
+    readout: document.getElementById('readout')
+  };
+
+  function f(n) { return n.toFixed(1); }
+
+  function membranePath(y, d) {
+    return 'M0,' + y + ' L150,' + y +
+           ' C205,' + y + ' 240,' + f(y + d) + ' 320,' + f(y + d) +
+           ' C400,' + f(y + d) + ' 435,' + y + ' 490,' + y + ' L640,' + y;
+  }
+
+  function render(t) {
+    var d = DEEP + (FLAT - DEEP) * t;
+    var yTop = TOP, yBot = TOP + THICK;
+    var apex = yTop + d;
+
+    var pTop = membranePath(yTop, d);
+    var pBot = membranePath(yBot, d);
+    el.lt.setAttribute('d', pTop);
+    el.lb.setAttribute('d', pBot);
+
+    el.bilayer.setAttribute('d',
+      'M0,' + yTop + ' L150,' + yTop +
+      ' C205,' + yTop + ' 240,' + f(yTop + d) + ' 320,' + f(yTop + d) +
+      ' C400,' + f(yTop + d) + ' 435,' + yTop + ' 490,' + yTop + ' L640,' + yTop +
+      ' L640,' + yBot + ' L490,' + yBot +
+      ' C435,' + yBot + ' 400,' + f(yBot + d) + ' 320,' + f(yBot + d) +
+      ' C240,' + f(yBot + d) + ' 205,' + yBot + ' 150,' + yBot + ' L0,' + yBot + ' Z');
+
+    el.bladeL.setAttribute('d',
+      'M172,' + f(yTop + 5) +
+      ' C222,' + f(yTop + 9) + ' 268,' + f(yTop + d * 0.72) + ' 309,' + f(apex - 3));
+    el.bladeR.setAttribute('d',
+      'M468,' + f(yTop + 5) +
+      ' C418,' + f(yTop + 9) + ' 372,' + f(yTop + d * 0.72) + ' 331,' + f(apex - 3));
+
+    var gap = 11 + 15 * t;
+    var hw = 10;
+    var hy = apex - 6, hh = 44;
+    el.hl.setAttribute('x', f(320 - gap / 2 - hw));
+    el.hl.setAttribute('y', f(hy));
+    el.hl.setAttribute('width', hw);
+    el.hl.setAttribute('height', hh);
+    el.hr.setAttribute('x', f(320 + gap / 2));
+    el.hr.setAttribute('y', f(hy));
+    el.hr.setAttribute('width', hw);
+    el.hr.setAttribute('height', hh);
+
+    var capCy = apex - 18 - 8 * t;
+    el.cap.setAttribute('cx', 320);
+    el.cap.setAttribute('cy', f(capCy));
+    el.cap.setAttribute('rx', f(30 - 3 * t));
+    el.cap.setAttribute('ry', 11);
+    el.cap.setAttribute('transform', 'rotate(' + f(-7 * t) + ' 320 ' + f(capCy) + ')');
+
+    el.ions.setAttribute('opacity', f(Math.max(0, (t - 0.35) / 0.65)));
+    el.ionLine.setAttribute('x1', 320);
+    el.ionLine.setAttribute('x2', 320);
+    el.ionLine.setAttribute('y1', f(apex - 22));
+    el.ionLine.setAttribute('y2', f(apex + 34));
+    el.ionHead.setAttribute('points',
+      f(320) + ',' + f(apex + 42) + ' ' +
+      f(320 - 5) + ',' + f(apex + 32) + ' ' +
+      f(320 + 5) + ',' + f(apex + 32));
+    el.ionA.setAttribute('cx', 320);
+    el.ionA.setAttribute('cy', f(apex - 4));
+    el.ionB.setAttribute('cx', 320);
+    el.ionB.setAttribute('cy', f(apex + 16));
+
+    var arm = 26 + 26 * t;
+    el.tlLine.setAttribute('x2', f(150 - arm));
+    el.tlHead.setAttribute('points',
+      f(150 - arm - 2) + ',124 ' + f(150 - arm + 8) + ',119 ' + f(150 - arm + 8) + ',129');
+    el.trLine.setAttribute('x2', f(490 + arm));
+    el.trHead.setAttribute('points',
+      f(490 + arm + 2) + ',124 ' + f(490 + arm - 8) + ',119 ' + f(490 + arm - 8) + ',129');
+    var tensionOpacity = 0.25 + 0.75 * t;
+    document.getElementById('tension-arrows').setAttribute('opacity', f(tensionOpacity));
+
+    // top view
+    var r = 62 + 9 * t;
+    var spread = 6 * t;
+    var paths = '';
+    for (var k = 0; k < 3; k++) {
+      var a0 = (k * 120 + 18 + spread) * Math.PI / 180;
+      var a1 = (k * 120 + 102 + spread) * Math.PI / 180;
+      var x0 = 100 + r * Math.cos(a0), y0 = 100 + r * Math.sin(a0);
+      var x1 = 100 + r * Math.cos(a1), y1 = 100 + r * Math.sin(a1);
+      paths += '<path d="M' + f(x0) + ',' + f(y0) +
+               ' A' + f(r) + ',' + f(r) + ' 0 0 1 ' + f(x1) + ',' + f(y1) + '"/>';
+    }
+    el.bladesTop.innerHTML = paths;
+    el.poreTop.setAttribute('r', f(9 + 7 * t));
+
+    // energy: G(x) = x^2 - 2*u*x, u = t
+    var u = t;
+    var pts = [];
+    for (var i = 0; i <= 60; i++) {
+      var x = i / 60;
+      var G = x * x - 2 * u * x;
+      var px = 42 + x * 248;
+      var py = 100 - G * 58;
+      pts.push((i ? 'L' : 'M') + f(px) + ',' + f(py));
+    }
+    el.eCurve.setAttribute('d', pts.join(' '));
+    var mx = 42 + u * 248;
+    var my = 100 - (-u * u) * 58;
+    el.eDot.setAttribute('cx', f(mx));
+    el.eDot.setAttribute('cy', f(my));
+    el.eLabel.setAttribute('x', f(Math.min(mx + 10, 210)));
+    el.eLabel.setAttribute('y', f(Math.max(my - 10, 30)));
+
+    var domeWord = t < 0.3 ? 'deep' : (t < 0.7 ? 'shallower' : 'nearly flat');
+    var gateWord = t < 0.45 ? 'closed' : (t < 0.8 ? 'partly open' : 'open');
+    el.readout.innerHTML = 'dome: ' + domeWord + '<br>gate: ' + gateWord;
+  }
+
+  var slider = document.getElementById('tension');
+  slider.addEventListener('input', function () {
+    render(Number(slider.value) / 100);
+  });
+  render(Number(slider.value) / 100);
+})();
+</script>
+</body>
+</html>
