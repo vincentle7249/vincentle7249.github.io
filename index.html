@@ -64,6 +64,33 @@
     cursor: pointer;
   }
   button.btn2:hover, button.btn2:focus { border-color: #1a5fd0; color: #1a5fd0; }
+  .section {
+    margin-top: 22px;
+    padding-top: 20px;
+    border-top: 1px solid #e8eaee;
+    text-align: left;
+  }
+  .section h2 {
+    margin: 0 0 12px;
+    font-size: 12.5px;
+    font-weight: 600;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    color: #6b7280;
+  }
+  a.item {
+    display: block;
+    margin-bottom: 8px;
+    padding: 12px 14px;
+    border: 1px solid #dde1e8;
+    border-radius: 10px;
+    text-decoration: none;
+    color: inherit;
+  }
+  a.item:hover, a.item:focus { border-color: #1a5fd0; }
+  .item-title { display: block; font-size: 15px; font-weight: 600; color: #14161a; }
+  a.item:hover .item-title, a.item:focus .item-title { color: #1a5fd0; }
+  .item-desc { display: block; margin-top: 3px; font-size: 13px; color: #6b7280; }
   .hint {
     margin-top: 22px;
     padding-top: 20px;
@@ -82,6 +109,13 @@
     a.btn.secondary { color: #7fb0ff; border-color: #333a45; }
     a.btn.secondary:hover, a.btn.secondary:focus { background: #1d2635; }
     button.btn2 { border-color: #333a45; }
+    .section { border-top-color: #262b33; }
+    .section h2 { color: #8b93a1; }
+    a.item { border-color: #333a45; }
+    a.item:hover, a.item:focus { border-color: #7fb0ff; }
+    .item-title { color: #e8eaee; }
+    a.item:hover .item-title, a.item:focus .item-title { color: #7fb0ff; }
+    .item-desc { color: #8b93a1; }
     .hint { border-top-color: #262b33; color: #8b93a1; }
     .hint strong { color: #c4cad4; }
     .hint p { color: #8b93a1; }
@@ -96,9 +130,19 @@
 
   <a class="btn" href="https://vincentle7249.github.io/photos/">Photo Share →</a>
   <a class="btn secondary" href="https://vincentle7249.github.io/media/">Media Share →</a>
-  <a class="btn secondary" href="/piezo1-dome/">Piezo1 dome explainer →</a>
-  <a class="btn secondary" href="https://vinserver.tailb05517.ts.net/artifacts/">Artifacts →</a>
   <button class="btn2" id="knock" type="button">Door closed? Enter access code</button>
+
+  <section class="section">
+    <h2>Artifacts</h2>
+    <a class="item" href="/piezo1-dome/">
+      <span class="item-title">Piezo1: the dome that opens a pore</span>
+      <span class="item-desc">Interactive schematic — drag membrane tension and watch the dome flatten as the pore opens.</span>
+    </a>
+    <a class="item" href="https://vinserver.tailb05517.ts.net/artifacts/">
+      <span class="item-title">Everything else →</span>
+      <span class="item-desc">The rest of the artifacts live on the vinserver share and need a login.</span>
+    </a>
+  </section>
 
   <div class="hint">
     <p><strong>You'll need a login</strong> for the full shares. Ask Vincent for the username and password — there's no sign-up.</p>
